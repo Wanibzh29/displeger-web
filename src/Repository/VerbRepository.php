@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Verb;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 /**
  * @method Verb|null find($id, $lockMode = null, $lockVersion = null)
  * @method Verb|null findOneBy(array $criteria, array $orderBy = null)
@@ -64,6 +64,28 @@ class VerbRepository extends ServiceEntityRepository implements AdminRepositoryI
             ->addOrderBy('lb')
         ;
         return $qb->getQuery();
+    }
+
+
+    public function getLocalizationSearchBuilder($term)
+    {
+        $escapedTerm = str_replace('n', '_', $term);
+        return $this->createQueryBuilder('v')
+            ->leftJoin('v.localizations', 'vl')
+            ->andWhere('UPPER(vl.infinitive) LIKE UPPER(:term)')
+            ->setParameter('term', '%'.$escapedTerm.'%')
+        ;
+    }
+
+    public function getTranslationSearchBuilder($term, $language)
+    {
+        return $this->createQueryBuilder('v')
+            ->leftJoin('v.translations', 'vt')
+            ->where('UPPER(vt.translation) LIKE UPPER(:term)')
+            ->andWhere('vt.languageCode = :language')
+            ->setParameter('language', $language)
+            ->setParameter('term', '%'.$term.'%')
+        ;
     }
 
 }

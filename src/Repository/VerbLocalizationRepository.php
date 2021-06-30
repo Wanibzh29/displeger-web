@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\VerbLocalization;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 /**
  * @method Verb|null find($id, $lockMode = null, $lockVersion = null)
  * @method Verb|null findOneBy(array $criteria, array $orderBy = null)
@@ -39,8 +39,8 @@ class VerbLocalizationRepository extends ServiceEntityRepository
     public function getFrontSearchQueryBuilder($term)
     {
         $escapedTerm = str_replace('n', '_', $term);
-        return $this->createQueryBuilder('vt')
-            ->andWhere('UPPER(vt.infinitive) LIKE UPPER(:term)')
+        return $this->createQueryBuilder('vl')
+            ->andWhere('UPPER(vl.infinitive) LIKE UPPER(:term)')
             ->setParameter('term', '%'.$escapedTerm.'%')
         ;
     }
